@@ -12,6 +12,63 @@ const isJsxExpressionString = (node: JsxAttribute) => {
   if (attrValue.expression.kind === ts.SyntaxKind.StringLiteral) return true;
 };
 
+const russianAlphabet = [
+  "а",
+  "б",
+  "в",
+  "г",
+  "д",
+  "е",
+  "ё",
+  "ж",
+  "з",
+  "и",
+  "й",
+  "к",
+  "л",
+  "м",
+  "н",
+  "о",
+  "п",
+  "р",
+  "с",
+  "т",
+  "у",
+  "ф",
+  "х",
+  "ц",
+  "ч",
+  "ш",
+  "щ",
+  "ъ",
+  "ы",
+  "ь",
+  "э",
+  "ю",
+  "я",
+];
+
+const countRussianLettersPercentage = (str) => {
+  let totalSymbols = 0;
+  let totalRussianSymbols = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c !== " ") {
+      totalSymbols++;
+      if (russianAlphabet.includes(c.toLowerCase())) {
+        totalRussianSymbols++;
+      }
+    }
+  }
+  return totalRussianSymbols / totalSymbols;
+};
+
+const ignoreString = (str: string): boolean => {
+  return (
+    str.trim().length === 0 || countRussianLettersPercentage(str.trim()) < 0.5
+  );
+};
+
 export function transformer<T extends ts.Node>(
   messages: {
     str: string;
@@ -24,9 +81,10 @@ export function transformer<T extends ts.Node>(
       node = ts.visitEachChild(node, visit, context);
 
       if (node.kind === ts.SyntaxKind.JsxText) {
+        if (ignoreString(node.getText())) return node;
         const key = `generated_i18n_${genId++}`;
         messages.push({
-          str: node.getText(),
+          str: node.getText().trim(),
           key,
         });
         const id = ts.createIdentifier("i18n");
@@ -43,10 +101,14 @@ export function transformer<T extends ts.Node>(
           // its our case
           // name="hehe"
           const id = ts.createIdentifier("i18n");
+          const rawString = ((node as JsxAttribute)
+            .initializer as StringLiteral).text.trim();
+          if (ignoreString(rawString)) return node;
+
           const key = `generated_i18n_${genId++}`;
           const access = ts.createPropertyAccess(id, key);
           messages.push({
-            str: ((node as JsxAttribute).initializer as StringLiteral).text,
+            str: rawString,
             key,
           });
           return ts.createJsxAttribute(
@@ -56,11 +118,16 @@ export function transformer<T extends ts.Node>(
         } else if (isJsxExpressionString(node as JsxAttribute)) {
           // its our case
           // name={"hehe"}
+          const rawString = (((node as JsxAttribute)
+            .initializer as JsxExpression)
+            .expression as StringLiteral).text.trim();
+          if (ignoreString(rawString)) return node;
+
           const id = ts.createIdentifier("i18n");
           const key = `generated_i18n_${genId++}`;
+
           messages.push({
-            str: (((node as JsxAttribute).initializer as JsxExpression)
-              .expression as StringLiteral).text,
+            str: rawString,
             key,
           });
           const access = ts.createPropertyAccess(id, key);
@@ -198,7 +265,7 @@ export default (str: string) => {
   );
 
   let msgs = [];
-  const printer = ts.createPrinter();
+  const printer = ts.createPrinter({});
   const result = ts.transform(sourceFile, [transformer(msgs)]);
 
   const i18n = generateI18n(
@@ -214,7 +281,7 @@ export default (str: string) => {
     ts.ScriptKind.TS
   );
 
-  console.log(msgs);
+
   const s = i18n
     .map((it) => {
       // @ts-ignore
@@ -222,6 +289,7 @@ export default (str: string) => {
     })
     .join("\n");
 
+  const unescaped = unescape(s.replace(/\\u/g, "%u"));
   // @ts-ignore
-  return [printer.printFile(result.transformed[0]), s];
+  return [printer.printFile(result.transformed[0]), unescaped];
 };
