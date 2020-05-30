@@ -5,21 +5,15 @@ import pretify from "../../../../tools/pretify";
 
 const fs = window.require("fs");
 const Path = window.require("path");
-interface IStore {
-  ignores: {
-    [key: string]: {
-      str: IRawString;
-      hovered: boolean;
-      enabled: boolean;
-    };
-  };
-  producedCode: string;
-  producedI18n: string;
-}
+
 
 export default class I18nStore {
   @observable
   public files: string[] = [];
+
+
+  @observable
+  public projectName: string = "test-project"
 
   @computed
   public get popFile(): string | undefined {
@@ -54,11 +48,14 @@ export default class I18nStore {
 
   @action
   public generateFiles(path: string, cached: string, ignores: string[]) {
-    try {
-      const [, c, i] = processFile(cached, ignores);
 
+    try {
       const fileName = Path.basename(path).split(".")[0];
       const i18nname = `${fileName}.i18n.ts`;
+      const i18nnameImport = `./${fileName}.i18n`;
+
+      const [, c, i] = processFile(this.projectName, i18nnameImport, cached, ignores);
+
 
       fs.writeFileSync(Path.resolve(Path.dirname(path), i18nname), pretify(i));
       fs.writeFileSync(path, pretify(c));

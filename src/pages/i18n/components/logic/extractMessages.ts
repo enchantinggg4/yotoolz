@@ -1,6 +1,6 @@
 import * as ts from "typescript";
-import transformer from "./jsx-string-transformer";
 import {IRawString} from "./processFile";
+import Transformer from "./Transformer";
 
 export default (str: string): IRawString[] => {
   let msgs: IRawString[] = [];
@@ -10,7 +10,12 @@ export default (str: string): IRawString[] => {
     ts.ScriptTarget.ES2015,
     /*setParentNodes */ true
   );
-  const result = ts.transform(sourceFile, [transformer(msgs)]);
+
+
+  const transformer = new Transformer([])
+  transformer.messages = msgs;
+
+  const result = ts.transform(sourceFile, [transformer.parse()]);
 
   return msgs;
 };
@@ -22,5 +27,7 @@ export const i18nize = (str: string, out: IRawString[], msgs: string[]) => {
     ts.ScriptTarget.ES2015,
     /*setParentNodes */ true
   );
-  return ts.transform(sourceFile, [transformer(out, msgs)]);
+  const transformer = new Transformer(msgs)
+  transformer.messages = out;
+  return ts.transform(sourceFile, [transformer.parse()]);
 };

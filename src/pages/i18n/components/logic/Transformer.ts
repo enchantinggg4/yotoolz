@@ -1,17 +1,66 @@
 import { IRawString } from "./processFile";
 import * as ts from "typescript";
-import { JsxText } from "typescript";
+import {JsxText, Node, TransformationContext} from "typescript";
 import { JsxAttribute } from "typescript";
 import { StringLiteral } from "typescript";
 import { JsxExpression } from "typescript";
 
+
+
+const isJsxExpressionString = (node: Node) => {
+  if (node.kind !== ts.SyntaxKind.JsxAttribute) return;
+  const attr = node as JsxAttribute;
+  const attrValue = attr.initializer;
+
+  if (!attrValue) return false;
+
+  if (attrValue.kind !== ts.SyntaxKind.JsxExpression) return;
+  if (attrValue.dotDotDotToken) return;
+  if (!attrValue.expression) return;
+  if (attrValue.expression.kind === ts.SyntaxKind.StringLiteral) return true;
+};
+
+
+const isJsxLiteralString = (node: Node) => {
+  if (node.kind !== ts.SyntaxKind.JsxAttribute) return;
+  const attr = node as JsxAttribute;
+  const attrValue = attr.initializer;
+  if (!attrValue) return false;
+  return attrValue.kind === ts.SyntaxKind.StringLiteral;
+};
+
+
 export default class Transformer {
-  private messages: IRawString[] = [];
+  public messages: IRawString[] = [];
   private keyIndex = 0;
 
   constructor(private ignores: string[]) {}
 
-  public parse() {}
+  public parse = () => {
+    return (context: TransformationContext) => {
+      let genId = 0;
+      let nodeIndex = 0;
+      const visit: ts.Visitor = (node) => {
+        nodeIndex++;
+        node = ts.visitEachChild(node, visit, context);
+
+        if (node.kind === ts.SyntaxKind.JsxText) {
+          return this.handleJsxText(node as JsxText)
+        } else if (isJsxLiteralString(node)) {
+          const attr = node as JsxAttribute;
+          return this.handleAttributeString(attr)
+        } else if (isJsxExpressionString(node as JsxAttribute)) {
+
+          return this.handleAttributeExpressionString(node as JsxAttribute)
+        }
+
+        return node;
+      };
+
+      return (node: ts.Node) => ts.visitNode(node, visit);
+    };
+
+  }
 
   private handleJsxText(node: JsxText) {
     if (Transformer.ignoreString(node.getText())) return node;

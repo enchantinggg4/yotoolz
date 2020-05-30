@@ -12,6 +12,8 @@ export interface IRawString {
 }
 
 export default (
+  prefix: string,
+  name: string,
   str: string,
   ignoredMessages: string[] = []
 ): [any[], string, string] => {
@@ -20,7 +22,7 @@ export default (
   const result = i18nize(str, msgs, ignoredMessages);
 
   const i18n = i18nGenerator(
-    "enterclass",
+    prefix,
     new Date().getTime().toString(),
     msgs
   );
@@ -41,7 +43,19 @@ export default (
 
   const unescaped = unescape(s.replace(/\\u/g, "%u"));
   // @ts-ignore
-  // const generatedCode = pretify(printer.printFile(result.transformed[0]));
-  const generatedCode = printer.printFile(result.transformed[0]);
+  const transformed: ts.SourceFile = result.transformed[0];
+
+  const import18nstatement = ts.createImportDeclaration(
+    undefined,
+    undefined,
+    ts.createImportClause(ts.createIdentifier("i18n"), undefined),
+    ts.createLiteral(name)
+  );
+  const newSF = ts.updateSourceFileNode(transformed, [
+    import18nstatement,
+    ...transformed.statements,
+  ]);
+  const generatedCode = printer.printFile(newSF);
+
   return [msgs, generatedCode, unescaped];
 };
