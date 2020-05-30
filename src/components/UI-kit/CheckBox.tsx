@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {colors} from "../../shared/theme";
 
 export const CheckBox = styled.input`
   -webkit-appearance: none;
@@ -17,7 +18,7 @@ export const CheckBox = styled.input`
   border-radius: 100%;
   /* auto, since non-WebKit browsers doesn't support input styling */
   margin: auto 10px;
-  border: 1px solid #87e0fd; /* Mobile Safari */
+  border: 1px solid ${colors.darkPurple}; /* Mobile Safari */
   outline: none;
 
   box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.2);
@@ -50,9 +51,8 @@ export const CheckBox = styled.input`
 
     background: radial-gradient(
       ellipse at center,
-      #87e0fd 0%,
-      #53cbf1 40%,
-      #05abe0 100%
+      ${colors.purple} 0%,
+      ${colors.darkPurple} 100%
     ); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#87e0fd', endColorstr='#05abe0',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
   }

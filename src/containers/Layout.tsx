@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { PropsWithChildren } from "react";
 import { Link } from "react-router-dom";
+import { colors } from "../shared/theme";
 const Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -26,10 +27,13 @@ const MenuItem = styled.div`
   padding: 8px;
   font-size: 20px;
   transition: 0.3s ease;
+  cursor: pointer;
   &:hover {
-    color: #ceffca;
+    color: ${colors.white};
+    border-bottom: 1px solid ${colors.darkPurple};
   }
   & a {
+    color: ${colors.white};
     text-decoration: none;
   }
 `;

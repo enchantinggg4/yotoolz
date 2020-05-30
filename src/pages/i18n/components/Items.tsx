@@ -2,7 +2,7 @@ import styled from "styled-components";
 import * as React from "react";
 import { observer } from "mobx-react";
 import { IRawString } from "./logic/processFile";
-import { CheckBox } from "../../../components/CheckBox/CheckBox";
+import { CheckBox } from "../../../components/UI-kit/CheckBox";
 
 const Item = styled.div`
   padding: 6px;

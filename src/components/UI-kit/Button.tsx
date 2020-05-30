@@ -1,18 +1,19 @@
 import styled, { css } from "styled-components";
+import {colors} from "../../shared/theme";
 
 export const ButtonStyled = css`
   transition: 0.25s;
   background: none;
-  color: white;
-  border: 1px solid #221e3f;
+  color: ${colors.white};
+  border: 1px solid ${colors.darkPurple};
   cursor: pointer;
   font: inherit;
   line-height: 1;
   padding: 1em 2em;
   &:hover:not([disabled]),
   &:focus:not([disabled]) {
-    border-color: #a972cb;
-    color: #a972cb;
+    border-color: ${colors.purple};
+    color: ${colors.purple};
   }
   &:hover:not([disabled]),
   &:focus:not([disabled]) {

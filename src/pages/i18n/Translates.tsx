@@ -38,7 +38,11 @@ const EditorWrapper = styled.div`
 
 const Buttons = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+
+  button + button {
+    margin-left: 20px;
+  }
   margin-top: 20px;
   margin-bottom: 20px;
 `;
@@ -112,7 +116,7 @@ export default observer(() => {
               highlight={highlight}
               text={cached}
               onChange={() => undefined}
-              readOnly={false}
+              readOnly={true}
             />
           </EditorWrapper>
         </CodeColumn>

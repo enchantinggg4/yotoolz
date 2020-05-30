@@ -54,11 +54,11 @@ export default class I18nStore {
       const i18nname = `${fileName}.i18n.ts`;
       const i18nnameImport = `./${fileName}.i18n`;
 
-      const [, c, i] = processFile(this.projectName, i18nnameImport, cached, ignores);
+      const [, generatedJsx, generatedI18nFile] = processFile(this.projectName, i18nnameImport, cached, ignores);
 
 
-      fs.writeFileSync(Path.resolve(Path.dirname(path), i18nname), pretify(i));
-      fs.writeFileSync(path, pretify(c));
+      fs.writeFileSync(Path.resolve(Path.dirname(path), i18nname), pretify(generatedI18nFile));
+      fs.writeFileSync(path, pretify(generatedJsx));
       this.files.shift();
     } catch (e) {
       console.log(e, "Somethin happened");
