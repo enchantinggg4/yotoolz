@@ -5,6 +5,9 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 
+
+require('update-electron-app')()
+
 let win: BrowserWindow | null = null;
 
 function createWindow() {
