@@ -1,6 +1,7 @@
 import { ButtonStyled } from "../UI-kit/Button";
 import styled from "styled-components";
 import * as React from "react";
+import KeyListener from "../KeyListener/KeyListener";
 
 // import { remote } from "electron"
 const { remote } = window.require("electron");
@@ -34,6 +35,8 @@ export default ({ onSelect }: Props) => {
 
   return (
     <Container>
+
+      <KeyListener code="KeyO" cmd={true} onKey={requestDirectory} />
       <StyledInputLabel onClick={requestDirectory}>
         Выбрать файл(ы)
       </StyledInputLabel>
