@@ -1,4 +1,5 @@
 'use strict';
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const fs = require('fs');
 const path = require('path');
@@ -49,6 +50,9 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+const MONACO_DIR = path.resolve(__dirname, './node_modules/monaco-editor');
+
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -300,6 +304,8 @@ module.exports = function(webpackEnv) {
         ...(modules.webpackAliases || {}),
       },
       plugins: [
+
+
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
         // guards against forgotten dependencies and such.
         PnpWebpackPlugin,
@@ -509,6 +515,10 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
+      new MonacoWebpackPlugin({
+        // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+        languages: ['json', 'typescript', 'javascript']
+      }),
       new HtmlWebpackPlugin(
         Object.assign(
           {},

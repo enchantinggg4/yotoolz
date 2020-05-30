@@ -1,0 +1,18 @@
+import Body from "some-shit"
+
+
+export default () => <Body>
+  <SplitPane
+    defaultSize={"70%"}
+    split={"vertical"}
+    onChange={() => State.editorShaker.shake()}
+  >
+    <CodeColumn>
+      <ColumnName>Компонент</ColumnName>
+      <CodeEditor text={code} onChange={process} readOnly={false} />
+    </CodeColumn>
+    <CodeColumn>
+      <Items items={[]} setEnabled={() => undefined} />
+    </CodeColumn>
+  </SplitPane>
+</Body>
