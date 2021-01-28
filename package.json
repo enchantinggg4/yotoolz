@@ -136,7 +136,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.0",
     "concurrently": "^5.1.0",
-    "electron": "^8.2.3",
+    "electron": "^9.4.0",
     "electron-builder": "^22.5.1",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "prettier": "^2.0.5",
